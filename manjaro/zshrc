@@ -1,0 +1,94 @@
+# Source manjaro-zsh-configuration
+if [[ -e /usr/share/zsh/manjaro-zsh-config ]]; then
+  source /usr/share/zsh/manjaro-zsh-config
+fi
+# Use manjaro zsh prompt
+if [[ -e /usr/share/zsh/manjaro-zsh-prompt ]]; then
+  source /usr/share/zsh/manjaro-zsh-prompt
+fi
+
+#android home
+export ANDROID_HOME=/usr/lib/Android
+export PATH=$ANDROID_HOME/tools:$PATH
+export PATH=$ANDROID_HOME/tools/bin:$PATH
+export PATH=$ANDROID_HOME/platform-tools:$PATH
+
+#android sdk root
+export ANDROID_SDK_ROOT=/usr/lib/Android
+export PATH=$ANDROID_SDK_ROOT:$PATH
+
+#gradle
+export GRADLE_HOME=/opt/gradle/gradle-5.6.2
+export PATH=$GRADLE_HOME/bin:$PATH
+
+#flutter
+export FLUTTER_HOME=/usr/lib/flutter
+export PATH=$FLUTTER_HOME/bin:$PATH
+
+
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk/
+
+
+export HADOOP_CONF_DIR=/etc/hadoop
+
+
+setopt hist_ignore_all_dups # remove older duplicate entries from history
+setopt hist_reduce_blanks # remove superfluous blanks from history items
+setopt inc_append_history # save history entries as soon as they are entered
+setopt share_history # share history between different instances of the shell
+
+setopt correct_all # autocorrect commands
+setopt auto_list # automatically list choices on ambiguous completion
+setopt auto_menu # automatically use menu completion
+setopt always_to_end # move cursor to end if word had one match
+
+zstyle ':completion:*' group-name '' # group results by category
+zstyle ':completion:::::' completer _expand _complete _ignored _approximate #enable approximate matches for completion
+
+# Aliases
+alias ll="ls -l"
+alias la="ls -a"
+alias config="vim $HOME/.zshrc"
+alias reload="source $HOME/.zshrc"
+
+
+#vs code
+if ! which code > /dev/null && which code-insiders > /dev/null; then
+  : ${VSCODE:=code-insiders}
+else
+  : ${VSCODE:=code}
+fi
+
+# Define aliases
+alias vsc="$VSCODE ."
+alias vsca="$VSCODE --add"
+alias vscd="$VSCODE --diff"
+alias vscg="$VSCODE --goto"
+alias vscn="$VSCODE --new-window"
+alias vscr="$VSCODE --reuse-window"
+alias vscw="$VSCODE --wait"
+alias vscu="$VSCODE --user-data-dir"
+
+#lfcd
+LFCD="/Users/rajasinghsamuel/.config/lf/lfcd.sh"
+if [ -f "$LFCD" ]; then
+    source "$LFCD"
+fi
+bindkey -s '^o' 'lfcd\n'
+lfcd () {
+    tmp="$(mktemp)"
+    lf -last-dir-path="$tmp" "$@"
+    if [ -f "$tmp" ]; then
+        dir="$(cat "$tmp")"
+        rm -f "$tmp"
+        if [ -d "$dir" ]; then
+            if [ "$dir" != "$(pwd)" ]; then
+                cd "$dir"
+            fi
+        fi
+    fi
+}
+
+
+
+function tma() { tmux attach-session -t $1 }
